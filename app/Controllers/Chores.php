@@ -25,44 +25,43 @@ class Chores extends Controller {
     }
 
     public function assign($id) {
-	    $dwarfmodel = new Dwarf();
-	    $taskmodel = new Task();
+
+        $dwarfmodel = new Dwarf();
+        $taskmodel = new Task();
         $prioritymodel = new Priority();
         $groupmodel = new Group();
 
-	    $data = $dwarfmodel->getDwarves($id);
-	    $dom = new domDocument("1.0");
-	    $dom->formatOutput = true;
-	    $root = $dom->appendChild(($dom->createElement("dwarves")));
-	    $sxe = simplexml_import_dom($dom);
-	    $dwarf = $sxe->addchild("dwarf");
-        $dwarf->addChild("name", $data['name']);
-        $dwarf->addChild("role", $data['role']);
-        $chores = $dwarf->addChild("chores");
+        $dwarf = $dwarfmodel->getDwarves($id);
+        
+        $resp = [
+            'name' => $dwarf['name'],
+            'role' => $dwarf['role'],
+            'chores' => []
+        ];
+
         $takentasks = [];
-        for($i = 0; $i < 3; ++$i)
-        {
+        for($i = 0; $i < 3; ++$i) {
+          
             $taskid = mt_rand(1, 15);
+          
             while(in_array($taskid, $takentasks)) {
                 $taskid = mt_rand(1, 15);
             }
+
             $taskdata = $taskmodel->getTasks($taskid);
-            array_push($takentasks, $taskid);
-
-            $task = $chores->addChild("task");
-            $task->addchild("ID", $taskdata['id']);
-            $task->addchild("Description", htmlspecialchars($taskdata['task']));
             $prioritydata = $prioritymodel->getPriority($taskdata['priority']);
-            $task->addChild("priority", $prioritydata['name']);
             $groupdata = $groupmodel->getGroups($taskdata['group']);
-            $task->addChild("group", $groupdata['name']);
 
+            $task = [
+                'id' => $taskdata['id'],
+                'description' => $taskdata['task'],
+                'priority' => $prioritydata['name'],
+                'group' => $groupdata['name']
+            ];
+
+            array_push($resp['chores'], ['task'=> $task]);
         }
 
-        $dom->loadXML($sxe->asXML());
-        $simple = simplexml_load_string($dom->saveXML());
-        $arr = json_decode( json_encode($simple), 1);
-	    //echo $dom->saveXML();
-        return $this->response->setXML($arr);
+        return $this->response->setXML($resp);
     }
 }
