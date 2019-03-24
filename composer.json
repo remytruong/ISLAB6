@@ -8,7 +8,8 @@
         "php": ">=7.2",
       "codeigniter4/framework": "^4@alpha",
       "ext-dom": "*",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "ext-json": "*"
     },
     "require-dev": {
         "mikey179/vfsstream": "1.6.*",

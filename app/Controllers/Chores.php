@@ -60,7 +60,9 @@ class Chores extends Controller {
         }
 
         $dom->loadXML($sxe->asXML());
+        $simple = simplexml_load_string($dom->saveXML());
+        $arr = json_decode( json_encode($simple), 1);
 	    //echo $dom->saveXML();
-        return $this->respond($sxe->asXML());
+        return $this->response->setXML($arr);
     }
 }
