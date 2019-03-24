@@ -26,13 +26,16 @@ class Chores extends Controller {
 
     public function assign($id) {
 
+        // Setting up models
         $dwarfmodel = new Dwarf();
         $taskmodel = new Task();
         $prioritymodel = new Priority();
         $groupmodel = new Group();
 
+        // Getting the dwarf
         $dwarf = $dwarfmodel->getDwarves($id);
         
+        // Building response data
         $resp = [
             'name' => $dwarf['name'],
             'role' => $dwarf['role'],
@@ -42,16 +45,19 @@ class Chores extends Controller {
         $takentasks = [];
         for($i = 0; $i < 3; ++$i) {
           
+            // Finding a random task
             $taskid = mt_rand(1, 15);
           
             while(in_array($taskid, $takentasks)) {
                 $taskid = mt_rand(1, 15);
             }
 
+            // Loading task data
             $taskdata = $taskmodel->getTasks($taskid);
             $prioritydata = $prioritymodel->getPriority($taskdata['priority']);
             $groupdata = $groupmodel->getGroups($taskdata['group']);
 
+            // Building the task
             $task = [
                 'id' => $taskdata['id'],
                 'description' => $taskdata['task'],
@@ -59,9 +65,11 @@ class Chores extends Controller {
                 'group' => $groupdata['name']
             ];
 
+            // Inserting task into response
             array_push($resp['chores'], ['task'=> $task]);
         }
 
+        // Returning as XML Response
         return $this->response->setXML($resp);
     }
 }
