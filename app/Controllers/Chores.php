@@ -52,7 +52,11 @@ class Chores extends Controller {
             $task = $chores->addChild("task");
             $task->addchild("ID", $taskdata['id']);
             $task->addchild("Description", htmlspecialchars($taskdata['task']));
-            
+            $prioritydata = $prioritymodel->getPriority($taskdata['priority']);
+            $task->addChild("priority", $prioritydata['name']);
+            $groupdata = $groupmodel->getGroups($taskdata['group']);
+            $task->addChild("group", $groupdata['name']);
+
         }
 
         $dom->loadXML($sxe->asXML());
