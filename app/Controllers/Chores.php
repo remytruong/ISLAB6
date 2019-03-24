@@ -9,13 +9,19 @@ class Chores extends Controller {
 
 	public function index() {
 		$model = new Dwarf();
-		$data['dwarves'] = $model->getDwarves();
-        return $this->respond($data['dwarves'], 200, 'yayeet');
+		$data = ['dwarves' => $model->getDwarves(),
+                 'title' => 'Dwarves & Chores'];
+		echo view('chores', $data);
 	}
 
 	public function show($id) {
 	    $model = new Dwarf();
 	    $data = $model->getDwarves($id);
-	    return $this->respond($data, 200, 'yoot');
+    }
+
+    static public function assign($id) {
+	    $model = new Dwarf();
+	    $dwarf = $model->getDwarves($id);
+	    echo $dwarf['name'];
     }
 }
