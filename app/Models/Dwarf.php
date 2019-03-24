@@ -10,4 +10,6 @@ class Dwarf extends Model {
 		}
 		return $this->asArray()->where(['id'=>$id])->first();
 	}
+
+
 }
