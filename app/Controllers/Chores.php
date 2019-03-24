@@ -25,21 +25,35 @@ class Chores extends Controller {
     }
 
     public function assign($id) {
+	    //setting up what models I need
 	    $dwarfmodel = new Dwarf();
 	    $taskmodel = new Task();
         $prioritymodel = new Priority();
         $groupmodel = new Group();
 
-	    $data = $dwarfmodel->getDwarves($id);
-	    $dom = new domDocument("1.0");
+        //data of dwarf given the id
+        $data = $dwarfmodel->getDwarves($id);
+
+        //creating a new document for simpleXML
+        $dom = new domDocument("1.0");
 	    $dom->formatOutput = true;
+
+	    //making root element dwarves (incase i want a list of dwarves in the future)
 	    $root = $dom->appendChild(($dom->createElement("dwarves")));
 	    $sxe = simplexml_import_dom($dom);
+
+	    //adding individual dwarf
 	    $dwarf = $sxe->addchild("dwarf");
         $dwarf->addChild("name", $data['name']);
         $dwarf->addChild("role", $data['role']);
+
+        //creating chores child
         $chores = $dwarf->addChild("chores");
+
+        //making sure i dont pick a task twice or thrice
         $takentasks = [];
+
+        //for each task get their description, id, priority(name) and group(name)
         for($i = 0; $i < 3; ++$i)
         {
             $taskid = mt_rand(1, 15);
@@ -50,7 +64,10 @@ class Chores extends Controller {
             array_push($takentasks, $taskid);
 
             $task = $chores->addChild("task");
+
             $task->addchild("ID", $taskdata['id']);
+
+            //making sure htmlspecialcharacters aren't messing anything up
             $task->addchild("Description", htmlspecialchars($taskdata['task']));
             $prioritydata = $prioritymodel->getPriority($taskdata['priority']);
             $task->addChild("priority", $prioritydata['name']);
@@ -59,10 +76,9 @@ class Chores extends Controller {
 
         }
 
-        $dom->loadXML($sxe->asXML());
-        $simple = simplexml_load_string($dom->saveXML());
-        $arr = json_decode( json_encode($simple), 1);
-	    //echo $dom->saveXML();
+        //converting to an array to send as an XML easier
+        $arr = json_decode( json_encode($sxe), 1);
+
         return $this->response->setXML($arr);
     }
 }
