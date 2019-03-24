@@ -2,7 +2,7 @@
 <?php if( !empty($dwarves)) : ?>
     <ul>
     <?php foreach ($dwarves as $dwarf) : ?>
-        <li><a href="<?= \App\Controllers\Chores::assign($dwarf['id'])?>"><?= $dwarf['name'] ?></a></li>
+        <li><a href="chores/assign/<?= $dwarf['id']?>"><?= $dwarf['name'] ?></a></li>
     <?php endforeach; ?>
     </ul>
 <?php else : ?>
